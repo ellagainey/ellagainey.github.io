@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Cowboy: A 2d Browser-based RPG</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="generic.html" class="logo">Cowboy RPG</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Home Page</a></li>
+							<li class="active"></li>
+							<li></li>
+						</ul>
+						<ul class="icons">
+						<li><a href="https://www.linkedin.com/in/ella-gainey/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+							<li><a href="https://github.com/audreyeg/EllaGainey" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<!-- Post -->
+							<section class="post">
+									<ul class="actions">
+										<li><a href="https://audreyeg.github.io/CompWorlds/" class="button small">Play the game</a></li>
+										<li><a href="https://github.com/audreyeg/CompWorlds" class="button small">See the code on Github</a></li>
+									</ul>
+								<h3>Basic Information:</h3>
+											<ul>
+												<li>Language: Javascript(94%), HTML (6%).</li>
+												<li>Project type: small team of 3</li>
+												<li>My Contributions: all NPCs, dialogue system, main-character's animation, inventory system, all quests, user-interactions, shop/buy mechanics, scenery work, and storyline.</li>
+											</ul>
+								
+								<div class="image main"><img src="images/GAME_town.png" alt="" /></div>
+								<p>You begin your adventure in town, where you have the chance to interact with several NPCs, pick up scattered items, and begin quests. You can enter the saloon, the sheriff's, and the bank for unique quests. The saloon is also a great place to buy beer and medpacs. Collect items around town or by completing quests. 
+									 Some quests will take you out of town into "No Man's Land", a desert full of cowboy bandits and coyotes waiting to battle you. Thankfully, your trusty horse will help you get around faster. To complete the game, finish all three main quests and beat the final boss in the desert cave.
+								</p>
+
+									<h3>Combat:</h3>
+									<p><span class="image left"><img src="images/GAME_cowboyBattle.png" alt="" /></span>You're bound to encounter a bandit cowboy or wild coyote in the desert. If you get too close to them, you'll  have no choice but to battle it out. If you die, it's game over. Continue to win fights and you will gain experience points to level up. Winning battles also gets you coins and items. Before engaging in combat, load up on medpacs and armor plates to heal and defend yourself. After enough hits, you unlock your special attack. Watch your back, though, as your enemy has a few tricks up their sleeve, too.
+									</p>
+										<h3>Quests:</h3>
+									<p><span class="image right"><img src="images/GAME_questsUpdate.png" alt="" /></span>There are three main quests. Get started by entering buildings and talking to people around town. Your quests will be updated on the bottom right of your screen. (see photo --->) NPC dialogue will change depending on active quests. You must complete all three quests to unlock the final mission and boss battle. Completing quests will result in rewards, some more generous than others. </p>
+							
+
+											<h3>More:</h3>
+												<ul>
+												<li>Chat with unique NPCs using dialogue options.</li>
+												<li>Inventory system including coins, medpacs, beer, and armor plates. You will occasionally get items that won't show up in your inventory (such as ring and dynamite).</li>
+												<li>Tip: the cacti in the desert will damage you.</li>
+												<li>Note: game defaults to start in debug mode, uncheck it on bottom of screen to play without it. (debug mode shows red 'collision' barriers around every element in the game). </li>
+											</ul>
+
+
+
+
+											<h3>Code:</h3>
+											<p>I have included snippets of my code below, featuring the implementations I provided for the game including inventory control, mission control, and dialogue control systems. (chunks below are missing code I removed to conserve space on this page, see gitHub for full code)</p>
+											<h5>Dialogue control (NPCs)</h5>
+											<pre><code>//saloon NPC
+        if (entity instanceof npc && entity.saloon) {
+          //user is now in conversation
+          that.talking = true;
+          //this will determine which dialogue options to show in switch statement
+          var stateResponse = 0;
+          //npc line
+          changeChat("Howdy Partner!");
+          if (that.game.camera.missions.missions["FindRing"].state == 1) {
+          	changeChat("Look around town for my ring!")
+          	changeChat1("");
+          	changeChat2("");
+          }
+          else if (that.game.camera.missions.missions["FindRing"].state == 2) {
+            changeChat1("I found your ring!");
+            changeChat2("");
+
+          }
+          else if (that.game.camera.missions.missions["FindRing"].state == 4) {
+          	changeChat1("Can I buy a medpac?");
+          	changeChat2("Just stopping by");
+          }
+          else {
+            changeChat1("I heard bandits were terrozing the town.");
+            changeChat2("");
+          }
+            //gets from index file the response (1 or 2) that user selected based on which button was pushed
+          var user = response;
+          //set the state to determine dialogue options
+          //LEVEL 1 of conversation
+          if (user == 1 && userCount == 1 && (that.game.camera.missions.missions["FindRing"].state == 2)) {
+            stateResponse = 5;
+          }
+          else if (user == 1 && userCount == 1 && (that.game.camera.missions.missions["FindRing"].state == 4) && (playerInventory.check("coin", 10))) {
+          	buyMedpac = true;
+          	stateResponse = 6;
+          }
+	  else if (user == 1 && userCount == 1 && (that.game.camera.missions.missions["FindRing"].state == 4) && !(playerInventory.check("coin", 10))) {
+            stateResponse = 7;
+          }
+           switch (stateResponse) {
+            case 1:
+              changeChat("Yes! In fact, they stole my very precious ring! Are you interested in getting it back for me?");
+              changeChat1("No");
+              changeChat2("How can I help?");
+              break;
+            //if user selected option 2 ("Have you seen my hat?")
+            case 2:
+              changeChat("My ring is somewhere in town. The sherrif chased them of and they dropped it nearby. I just can't seem to find it. If you see it, bring it to me.");
+              changeChat1("");
+              changeChat2("");
+              if (that.game.camera.missions.missions["FindRing"].state == 0) {
+                that.game.camera.missions.missions["FindRing"].state = 1;
+              }
+              break;
+</code></pre>
+
+
+
+										<h5>Iventory Control</h5>
+											<pre><code>//INVENTORY
+
+Inventory = function () {
+  var self = {
+    items: [], //{id:"itemId",amount:1}
+  }
+
+  //add item to inentory 
+  self.addItem = function (id, amount) {
+    for (var i = 0; i < self.items.length; i++) {
+      if (self.items[i].id === id) {
+        self.items[i].amount += amount;
+        self.refreshRender();
+        return;
+      }
+    }
+    self.items.push({ id: id, amount: amount });
+    self.refreshRender();
+  }
+
+  //remove item from inventory 
+  self.removeItem = function (id, amount) {
+    for (var i = 0; i < self.items.length; i++) {
+      if (self.items[i].id === id) {
+        self.items[i].amount -= amount;
+        if (self.items[i].amount <= 0)
+          self.items[i].amount = 0;
+        self.refreshRender();
+        return;
+      }
+    }
+  }
+  //define inventory items and how they're used
+Item = function (id, name, event,key = false) {
+  var self = {
+    id: id,
+    name: name,
+    event: event,
+    key: key,
+  }
+  Item.List[self.id] = self;
+  return self;
+}
+Item.List = {};
+
+//health pacs will increase health and be removed upon use 
+Item("medpac", "MedPac", function () {
+  if (playerInventory.hasItem("medpac", 0) && gameEngine.camera.cowboy.health < gameEngine.camera.cowboy.maxHealth) {
+    gameEngine.camera.cowboy.health += 25;
+    playerInventory.removeItem("medpac", 1);
+  }
+});
+
+Item("ring", "Ring", function () {
+  if (playerInventory.hasItem("ring", 0)) {
+    playerInventory.removeItem("ring", 1);
+  }
+}, true);
+
+</code></pre>
+
+										<h5>Mission Control</h5>
+											<pre><code>class MissionManager
+{
+    constructor(game)
+    {
+        this.game = game;
+        this.missions = [];
+        this.missions["Bank"] = new BankerMission(this.game);
+        this.missions["KillCoyote"] = new KillCoyoteMission(this.game);
+        this.missions["FindRing"] = new findStolenRing(this.game);
+        this.missions["FindMoney"] = new findMoney(this.game);
+        this.missions["FinalFight"] = new finalFight(this.game);
+    }
+}
+class Missions
+{
+    constructor(game,name)
+    {
+        this.game = game;
+        this.state = 0;// 0: inavtive 1: active 2: completed 
+        this.name = name;
+        this.flags = [];
+    }
+}
+class findMoney extends Missions 
+{
+    constructor(game)
+    {
+        super(game,"Find Money");
+        this.flags["found"] = false;
+        this.state = 0;
+    }
+    update()
+    {
+        if(this.state == 1)
+        {
+            if(moneyFound)
+            {
+                  this.state = 2;
+            }
+        }
+    }
+    draw(ctx)
+    {
+        if(this.state == 1)
+        {
+            addQuests("find money");
+        }
+        if (this.state == 2)
+        {
+            addQuests("return money");
+        }
+        if (this.state == 3) {
+            clearQuests("money");
+        }
+    }
+}
+
+</code></pre>
+					</div>
+
+</section>
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>&copy; Ella Gainey</li><li> <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

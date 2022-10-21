@@ -1,0 +1,398 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>15 Puzzle Solver</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="puzzle.html" class="logo">15 Puzzle Solver</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Home Page</a></li>
+							<li class="active"></li>
+							<li></li>
+						</ul>
+						<ul class="icons">
+						<li><a href="https://www.linkedin.com/in/ella-gainey/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+							<li><a href="https://github.com/audreyeg/EllaGainey" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+						<!-- Post -->
+							<section class="post">
+									<ul class="actions">
+										<li><a href="https://github.com/audreyeg/EllaGainey/tree/master/15Puzzle" class="button small">See the code on Github</a></li>
+									</ul>
+								<h3>Basic Information:</h3>
+											<ul>
+												<li>Language: Java(100%).</li>
+												<li>Project type: individual</li>
+                        <li>Made with: Eclipse.</li>
+											</ul>
+								
+								<div class="image left"><img src="images/15puzzle.png" alt="" /></div>
+								<p>The 15 puzzle sliding game involves moving tiles (here numbered 1-15) and placing them in order, with only one available slot to move pieces into. For this program, instead of using double digit numbers, we replace them with letters of the alphabet. A is equivalent to 10, B to 11... F to 15. The purpose of this program is to be given a random input with digits 1-9 and letters A-F, including a space somewhere in the input. The space symbolizes the empty tile, which is the contraint in which the puzzle can be solved. The program must correctly order the given input, keeping track of the empty tile and only making legal moves, using the given search method. The user can request A-Star (A*), Breadth First Search(BFS), Depth First Search(DFS), Greedy Best First Search(Greedy), and Depth Limited Search(DLS). If user chooses DLS they must also give a valid depth (non-negative integer), if Greedy or A* then user must select heuristic 1 (h1) or heuristic 2(h2).
+								</p>
+
+									<h3>Input:</h3>
+									<p><span class="image left"><img src="images/PUZZLE_commandLine.png" alt="" /></span>This program is designed to run from the command line. If using Eclipse, you can hit Run -> Run Configurations -> open Arguments tab. Input should be entered with a 16 digit (space included) 1-9 A-F puzzle start state surrounded by quotations. Followed by a space, followed by a search technique to use (BFS, DFS, AStar, GBFS, DLS).If DLS then third argument after a space should be a valid depth (non negative integer).  If GBFS or AStar then h1 or h2 should be passed after a space. Example of valid argument input: "123456789ABC DFE" AStar h1
+									</p>
+										<h3>Output:</h3>
+									<p><span class="image main"><img src="images/PUZZLE_readMe.png" alt="" /></span>If you provided a solveable puzzle then the console output will look something like this. (program only completes one puzzle at a time, but I show several run throughs to display variation). The puzzle should be printed in its inital state followed by its solved state, beginning at 1 and ending with F. The following four numbers are 1) the level (on search tree) the winning state was found AKA the depth, 2) how many nodes are added to the total fringe, 3) how many nodes were expanded, and 4) the size of the fringe. Finally, the time taken for the search to run and its time complexity.</p>
+							
+
+											<h3>More:</h3>
+												<ul>
+												<li>Tip: if you don't correctly type your input, you will get an error message, and a chance to try again. You will be reminded of the input constraints, follow them closely to make program run.</li>
+												<li>Hint: if you're not comfortable running from the command line. Look at my above notes on how to run it on Eclipse.</li>
+												<li>Tip: some puzzles are not solveable. The program will check if your input is solveable (even if its correct format) before trying to solve it. This means you may get a message that tells you there is no solution. Try a different starting input.</li>
+											</ul>
+
+
+
+
+											<h3>Code:</h3>
+											<p>I have included snippets of my code below, featuring several implementations including the following algorithms: A*, BFS, DFS, and Greedy. (chunks below are missing code I removed to conserve space on this page, see gitHub for full code)</p>
+											<h5>A*</h5>
+											<pre><code>/**
+   * Method that first checks if goal state has been reached, then  explores all children
+   * and adds them to the fringe. 
+   * 
+   */
+
+  public void startSearch() {
+    //start timer
+    long startTime = System.currentTimeMillis();
+    while (true) {
+      //remove Node to explore from the fringe
+      Node temp = fringe.remove();
+      size--;
+      //executes when goal state has been reached
+      if (temp.getBoard().isGoal()) {
+        temp.getBoard().printArray();
+        //stop timer
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime); 
+
+        //output
+        System.out.println("depth: " + temp.getLevel());
+        System.out.println("expanded nodes: " + expandedNodes);
+        System.out.println("num created: "+ numCreated);
+        System.out.println("max fringe: " + size);
+        System.out.println("time taken (in ms): " + duration + " Big-O(4^d) + O(log(n)) priority queue enqueue + O(log(n)) priority queue dequeue");
+        pw.write("goal state reached: " + temp.getBoard().toString());
+        pw.write("\n" + temp.getLevel());
+        pw.write("," + numCreated);
+        pw.write("," + expandedNodes);
+        pw.write("," + size);
+        pw.write("\ntime taken (in ms): " + duration + " Big-O(4^d) + O(log(n)) priority queue enqueue + O(log(n)) priority queue dequeue");
+        break;
+      }
+      //executes when goal state isn't reached. Checks first if board state has been previously explored
+      if (!visitedNodes.contains(temp.getBoard().toString())) {
+        visitedNodes.add(temp.getBoard().toString());
+        expandedNodes++;
+
+        //checks if move right is legal and adds board to fringe
+        if (temp.getBoard().getRight()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveRight(), heuristic);
+          fringe.add(new Node(temp, tempBoard, true));
+          numCreated++;
+          size++;
+        }
+        //checks if move down is legal and adds board to fringe
+        if (temp.getBoard().getDown()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveDown(), heuristic);
+          fringe.add(new Node(temp, tempBoard, true));  
+          numCreated++;
+          size++;
+        }
+
+        //checks if move left is legal and adds board to fringe
+        if (temp.getBoard().getLeft()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveLeft(), heuristic);
+          fringe.add(new Node(temp, tempBoard, true));
+          numCreated++;
+          size++;
+        }
+        //checks if move up is legal and adds board to fringe
+        if (temp.getBoard().getUp()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveUp(), heuristic);
+          fringe.add(new Node(temp, tempBoard, true));
+          numCreated++;
+          size++;
+        }
+      }
+    }
+
+  }
+</code></pre>
+
+
+
+										<h5>BFS</h5>
+											<pre><code>/**
+   * Method that first checks if goal state has been reached, then  explores all children
+   * and adds them to the fringe. 
+   * 
+   */
+  public void startSearch() {
+    //start timer
+    long startTime = System.currentTimeMillis();
+    while (true) {
+      //remove Node to explore from the fringe
+      Node temp = fringe.remove();
+      size--;
+      //executes when goal state has been reached
+      if (temp.getBoard().isGoal()) {
+        temp.getBoard().printArray();
+        //stop timer
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime); 
+
+        //output
+        System.out.println("depth: " + temp.getLevel());
+        System.out.println("expanded nodes: " + expandedNodes);
+        System.out.println("num created: "+ numCreated);
+        System.out.println("max fringe: " + size);
+        System.out.println("time taken (in ms): " + duration + " Big-O(4^d) + O(1) enqueue + O(1) dequeue");
+        pw.write("goal state reached: " + temp.getBoard().toString());
+        pw.write("\n" + temp.getLevel());
+        pw.write("," + numCreated);
+        pw.write("," + expandedNodes);
+        pw.write("," + size);
+        pw.write("\ntime taken (in ms): " + duration + " Big-O(4^d) + O(1) enqueue + O(1) dequeue");
+        break;
+      }
+      //executes when goal state isn't reached. Checks first if board state has been previously explored
+      if (!visitedNodes.contains(temp.getBoard().toString())) {
+        visitedNodes.add(temp.getBoard().toString());
+        expandedNodes++;
+
+        //checks if move right is legal and adds board to fringe
+        if (temp.getBoard().getRight()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveRight());
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+        }
+        //checks if move down is legal and adds board to fringe
+        if (temp.getBoard().getDown()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveDown());
+          fringe.add(new Node(temp, tempBoard, false)); 
+          numCreated++;
+          size++;
+        }
+        //checks if move left is legal and adds board to fringe
+        if (temp.getBoard().getLeft()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveLeft());
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+        }
+        //checks if move up is legal and adds board to fringe
+        if (temp.getBoard().getUp()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveUp());
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+        }
+      }
+    }
+
+
+</code></pre>
+
+										<h5>DFS</h5>
+											<pre><code>/**
+     * Method that first checks if goal state has been reached, then  explores all children
+     * and adds them to the fringe. 
+     * 
+     */
+    public void startSearch() {
+      //start timer
+      long startTime = System.currentTimeMillis();
+      while (true) {
+        //remove Node to explore from the fringe
+        Node temp = fringe.pop();
+        size--;
+        //executes when goal state has been reached
+        if (temp.getBoard().isGoal()) {
+          temp.getBoard().printArray();
+          //stop timer
+          long endTime = System.currentTimeMillis();
+          long duration = (endTime - startTime); 
+          
+          //output
+          System.out.println("depth: " + temp.getLevel());
+          System.out.println("expanded nodes: " + expandedNodes);
+          System.out.println("num created: "+ numCreated);
+          System.out.println("max fringe: " + size);
+          System.out.println("time taken (in ms): " + duration + " Big-O(4^m) where m is max depth/depth selected for DLS + O(1) stack push + O(1) stack pop");
+          pw.write("goal state reached: " + temp.getBoard().toString());
+          pw.write("\n" + temp.getLevel());
+          pw.write("," + numCreated);
+          pw.write("," + expandedNodes);
+          pw.write("," + size);
+          pw.write("\ntime taken (in ms): " + duration + " Big-O(4^m) where m is max depth/depth selected for DLS + O(1) stack push + O(1) stack pop");
+          break;
+        }
+        //executes when goal state isn't reached. Checks first if board state has been previously explored
+        if (!temp.getBoard().isGoal() && (temp.getLevel() > maxDepth)) {
+          System.out.println("Goal could not be reached by specified depth");
+          pw.print("Goal could not be reached by specified depth");
+          break;
+        }
+        
+        //moves are in reverse order as BFS so DFS is always popping right most branch if available
+        //checks if move right is legal and adds board to fringe
+        if (!visitedNodes.contains(temp.getBoard().toString()) && !(temp.getLevel() > maxDepth)) {
+          visitedNodes.add(temp.getBoard().toString());
+          expandedNodes++;
+        
+          //checks if move up is legal and adds board to fringe
+        if (temp.getBoard().getUp()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveUp());
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+        }
+        //checks if move left is legal and adds board to fringe
+        if (temp.getBoard().getLeft()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveLeft());
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+          }
+        //checks if move down is legal and adds board to fringe
+        if (temp.getBoard().getDown()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveDown());
+          fringe.add(new Node(temp, tempBoard, false)); 
+          numCreated++;
+          size++;
+          }
+        //checks if move right is legal and adds board to fringe
+        if (temp.getBoard().getRight()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveRight());
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+          }
+        }
+      }
+
+</code></pre>
+<h5>Greedy</h5>
+                      <pre><code>/**
+   * Method that first checks if goal state has been reached, then  explores all children
+   * and adds them to the fringe. 
+   * 
+   */
+  
+  public void startSearch() {
+    //start timer
+    long startTime = System.currentTimeMillis();
+    while (true) {
+      //remove Node to explore from the fringe
+      Node temp = fringe.remove();
+      size--;
+      //executes when goal state has been reached
+      if (temp.getBoard().isGoal()) {
+        temp.getBoard().printArray();
+        //stop timer
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime); 
+
+        //output
+        System.out.println("depth: " + temp.getLevel());
+        System.out.println("expanded nodes: " + expandedNodes);
+        System.out.println("num created: "+ numCreated);
+        System.out.println("max fringe: " + size);
+        System.out.println("time taken (in ms): " + duration +  " Big-O(4^m) + O(log(n)) priority queue enqueue + O(log(n)) priority queue dequeue");
+        pw.write("goal state reached: " + temp.getBoard().toString());
+        pw.write("\n" + temp.getLevel());
+        pw.write("," + numCreated);
+        pw.write("," + expandedNodes);
+        pw.write("," + size);
+        pw.write("\ntime taken (in ms): " + duration + " Big-O(4^m) + O(log(n)) priority queue enqueue + O(log(n)) priority queue dequeue");
+        break;
+      }
+      //executes when goal state isn't reached. Checks first if board state has been previously explored
+      if (!visitedNodes.contains(temp.getBoard().toString())) {
+        visitedNodes.add(temp.getBoard().toString());
+        expandedNodes++;
+
+        //checks if move right is legal and adds board to fringe
+        if (temp.getBoard().getRight()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveRight(), heuristic);
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+        }
+
+        //checks if move down is legal and adds board to fringe
+        if (temp.getBoard().getDown()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveDown(), heuristic);
+          fringe.add(new Node(temp, tempBoard, false)); 
+          numCreated++;
+          size++;
+        }
+
+        //checks if move left is legal and adds board to fringe
+        if (temp.getBoard().getLeft()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveLeft(), heuristic);
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+        }
+
+        //checks if move up is legal and adds board to fringe
+        if (temp.getBoard().getUp()) {
+          gameBoard tempBoard = new gameBoard(temp.getBoard().moveUp(), heuristic);
+          fringe.add(new Node(temp, tempBoard, false));
+          numCreated++;
+          size++;
+        }
+      }
+    }
+</code></pre>
+					</div>
+
+</section>
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>&copy; Ella Gainey</li><li> <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
